@@ -43,8 +43,8 @@ def getFiles():
             logger.info("No need to encode")
 
 def encodeFile(fileName):
-    file_base_name = fileName.split('.')[0]
-    file_extention = fileName.split('.')[1]
+    file_base_name = ''.join(fileName.split('.')[:-1])
+    file_extention = fileName.split('.')[-1]
     temp_file_name = file_base_name + "_h265." + file_extention
 
     command = "ffmpeg -hwaccel cuda -hwaccel_output_format cuda -i $input_file -c:v hevc_nvenc -crf $crf -c:a copy -c:s copy -map 0 $output_file"
