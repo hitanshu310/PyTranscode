@@ -12,10 +12,11 @@ class StreamInfo():
     
     def __init__(self, fileName: str):
         self._filename = fileName
+        self.commandBuilder()
 
     # *Important: Temporary initialization
     # TODO: Initialize with global options option
-    _global_options: list = ['-hide_banner', '-print_format', 'json']
+    _global_options: list = ['-hide_banner', '-v', 'quiet', '-print_format', 'json']
     
     def commandBuilder(self):
         logger.info(self._binary + self._global_options + self._metadata_option)
@@ -24,12 +25,10 @@ class StreamInfo():
         command.execute()
 
         if command.returncode == 0:
-            logger.info(json.loads(command.stdout))
+            self._stream_info = json.loads(command.stdout)
+            logger.info(self._stream_info)
         else:
             logger.error(command.stderr.decode())
 
-if __name__ == "__main__":
-    info  = StreamInfo('GX010626.MP4')
-    info.commandBuilder()
 
 
