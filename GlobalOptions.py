@@ -1,54 +1,81 @@
 from abc import ABC, abstractmethod
+from typing import List
 
-
-class GlobalOptionBuilder(ABC):
-    globalOptionsList = []
-
+class GlobalOptionsBuilder(ABC):
+    '''Abstract Component Class'''
     @abstractmethod
-    def add_option(self, **kwargs):
+    def add_options(self):
         pass
 
-
-class DefaultGlobalOptions(GlobalOptionBuilder):
-
-    global_options_list: list = []
-
-    def __init__(self, global_options_list):
-        self.global_options_list = global_options_list
-
-    def add_option(self, **kwargs):
-        return self.global_options_list
-
-
-class GlobalOptionDecorator(GlobalOptionBuilder, ABC):
-
-    _default_global_options: DefaultGlobalOptions = None
-
-    def __init__(self, default_global_options: DefaultGlobalOptions):
-        self._default_global_options = default_global_options
+class DefaultGlobalOptions(GlobalOptionsBuilder):
+    '''Concrete Component Class'''
+    _globalOptionsList:List=None
 
     @property
-    def default_global_options(self):
-        return self._default_global_options
+    def globalOptionsList(self):
+        return self._globalOptionsList
 
-    @default_global_options.setter
-    def default_global_options(self, default_global_options):
-        self._default_global_options = default_global_options
+    def __init__(self):
+        '''Initializing the _globalOptionsList'''
+        self._globalOptionsList=[]
+    
+    def add_options(self):
+        return self.globalOptionsList
 
-    @abstractmethod
-    def add_option(self):
+class GlobalOptionsDecorator(GlobalOptionsBuilder,ABC):
+    '''Abstract Decorator class for adding multiple global options'''
+    _baseGlobalOptions: GlobalOptionsBuilder = None
+
+    def __init__(self,baseGlobalOptions):
+        self._baseGlobalOptions = baseGlobalOptions    
+
+    @property
+    def baseGlobalOptions(self):
+        return self._baseGlobalOptions
+    
+    def add_options(self):
         pass
 
+class ConcreteHideFlagOptionDecorator(GlobalOptionsDecorator):
+    '''Concrete Decorator to add hide flag option'''
 
-class ConcreteHideFlagOptionDecorator(GlobalOptionDecorator):
+    def __init__(self, baseGlobalOptions):
+        super().__init__(baseGlobalOptions)
 
-    def add_option(self):
-        self.default_global_options.global_options_list = self.default_global_options.global_options_list + ["-hide-flag"]
-        return self.default_global_options
+    def add_options(self):
+        return self.baseGlobalOptions.add_options() + ["-hide-flag"]
+
+class ConcreteOverwriteOutputFiles(GlobalOptionsDecorator):
+    '''Concrete Decorator to to overwrite output files'''
+
+    def __init__(self, baseGlobalOptions, overwrite):
+        super().__init__(baseGlobalOptions)
+        self._overwrite=overwrite
+    
+    def add_options(self,overwrite='n'):
+        return self.baseGlobalOptions.add_options() + ['-'+self._overwrite]
+
+class ConcreteProgressURL(GlobalOptionsDecorator):
+    '''Concrete Decorator to tadd progress-url'''
+ 
+    def __init__(self, baseGlobalOptions,url):
+        super().__init__(baseGlobalOptions)
+        self._url=url
 
 
-class ConcreteLogLevelOptionDecorator(GlobalOptionDecorator):
+    def add_options(self):
+        return self.baseGlobalOptions.add_options() + ['-progress '+self._url]
+    
+if __name__=='__main__':
 
-    def add_option(self, **kwargs):
-        self.default_global_options.global_options_list = self.default_global_options.global_options_list + ["-loglevel", kwargs.pop('log_level')]
-        return self.default_global_options
+    globalOptions=DefaultGlobalOptions()
+    globalOptions=ConcreteOverwriteOutputFiles(globalOptions,'y')
+    globalOptions=ConcreteHideFlagOptionDecorator(globalOptions)
+    
+    # Checking intermediate result
+    print(globalOptions.add_options())
+    globalOptions=ConcreteProgressURL(globalOptions,'www.sample.com')
+    
+    # Calling add_options to get the final list
+    fullGlobalOptionsList=globalOptions.add_options()
+    print(fullGlobalOptionsList)
