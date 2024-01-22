@@ -2,14 +2,15 @@ import os
 import sys
 from util import fflogger
 from abc import ABC, abstractmethod
-from media_stream import VideoStream, AudioStream, SubtitleStream, DataStream, MediaStreamBuilder
+from media_stream import Videos, AudioStream, SubtitleStream, DataStream, MediaStreamBuilder
 from typing import List
+from collections.abc import Iterable, Iterator
 logger = fflogger.getLogger(__name__)
 
 class InputOptionsBuilder(ABC):
 
     @abstractmethod
-    def getOptions():
+    def getOptions(self):
         pass
 
 class BaseInputOptions(InputOptionsBuilder):
@@ -20,7 +21,8 @@ class BaseInputOptions(InputOptionsBuilder):
 
     # TODO: GlobalOptionBuilder instance to be added
     # *Might Autobox for convenience eg Videos composing _videos: List[VideoStream]
-    _videos: List[VideoStream] = None
+
+    _videos: Videos = None
     _audios: List[AudioStream] = None
     _subtitle_streams: List[SubtitleStream] = None
     _data_streams: List[DataStream] = None
@@ -44,10 +46,12 @@ class BaseInputOptions(InputOptionsBuilder):
         for data in self._data_streams:
             print(data)
 
-    def getOptions():
-        pass
+    def getOptions(self):
+        return self._default_input_option + [self._file_name]
 
-
+if __name__ == "__main__":
+    transcoder = BaseInputOptions('GX010626.MP4')
+    transcoder.describe()
 
 
 

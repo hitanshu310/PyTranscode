@@ -19,7 +19,6 @@ class StreamInfo():
     _global_options: list = ['-hide_banner', '-v', 'quiet', '-print_format', 'json']
     
     def commandBuilder(self):
-        logger.info(self._binary + self._global_options + self._metadata_option)
         self._command = self._binary + self._global_options + self._metadata_option + [self._filename]
         command = Command(self._command)
         command.execute()

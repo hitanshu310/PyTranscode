@@ -37,4 +37,3 @@ Ffmpeg command line options and order of implemetation priority
 | -pre[<u>:stream_specifier] preset_name</u> | `output` `output stream` | Specify the preset for matching stream(s) | `high` |
 | -stats | `global` | Print encoding progress/statistics| `high` |
 | -progress <u>url</u> | `global` | Send program-friendly progress information to <u>url</u> | `low` |
-
