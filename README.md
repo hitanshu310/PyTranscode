@@ -13,4 +13,4 @@ The transcoding process in **`ffmpeg`** for each output can be described by the 
 Ffmpeg working as described by `man ffmpeg`
 > Ffmpeg calls the libavformat library to read input files and get packets containing encoded data from them. When there are multiple input files, ffmpeg tries to keep them synchronized by tracking lowest timestamp on any active input stream. 
 <br><br>
-Encoded packets are then passed to the decoder. The decoder produces uncompressed frames (raw video/PCM audio/...) which can be processed further by filtering. After filtering, the frames are passed to the encoder, which encodes them and outputs encoded packets. Finally those are passed to the muxer, which writes the encoded packets to the output file.s
+Encoded packets are then passed to the decoder. The decoder produces uncompressed frames (raw video/PCM audio/...) which can be processed further by filtering. After filtering, the frames are passed to the encoder, which encodes them and outputs encoded packets. Finally those are passed to the muxer, which writes the encoded packets to the output file.
